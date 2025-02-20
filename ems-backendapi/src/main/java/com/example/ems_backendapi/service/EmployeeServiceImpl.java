@@ -12,6 +12,7 @@ import com.example.ems_backendapi.respository.EmployeeRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,9 +69,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public boolean deleteEmployee(Long id) {
         try {
-            EmployeeEntity employeeEntity = employeeRepository.findById(id).get();
-            employeeRepository.delete(employeeEntity);
-            return true;
+           Optional<EmployeeEntity> employeeEntity=employeeRepository.findById(id);
+        	if(employeeEntity.isPresent()) {
+        		 employeeRepository.delete(employeeEntity.get());
+        		 return true;
+        	}
+            return false;
         }
         catch (IllegalArgumentException e) {
            throw new BusinessException("608", "given employee id is null, try with another id " + e.getMessage());
